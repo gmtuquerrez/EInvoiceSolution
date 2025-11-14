@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="EInvoice.Api/EInvoice.Api.csproj" />
+  <Project Path="EInvoice.Infrastructure/EInvoice.Infrastructure.csproj" />
+  <Project Path="EInvoice.Services/EInvoice.Services.csproj" />
+  <Project Path="EInvoiceSolution.Core/EInvoiceSolution.Core.csproj" />
+</Solution>
