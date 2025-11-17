@@ -22,8 +22,11 @@
         public decimal TotalDiscount { get; set; }
         public decimal Tip { get; set; }
         public string Currency { get; set; }
-        public List<TotalWithTaxesModel> TotalWithTaxes { get; set; } = new List<TotalWithTaxesModel>();
         public CustomerModel Customer { get; set; }
+        public List<TotalWithTaxesModel> TotalWithTaxes { get; set; } = new List<TotalWithTaxesModel>();
         public List<InvoiceItemModel> Items { get; set; } = new();
+        public List<PaymentModel> Payments { get; set; } = new();
+        public List<AdditionalFieldModel> AdditionalFields { get; set; } = new();
+
     }
 }

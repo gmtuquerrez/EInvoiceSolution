@@ -57,7 +57,11 @@ namespace EInvoiceSolution.Core.Invoices.Mappers
                 }
             };
 
-            factura.InfoFactura.TotalConImpuestos.Add(taxesDetails);
+            foreach (var item in taxesDetails)
+            {
+                factura.InfoFactura.TotalConImpuestos.Add(item);
+            }
+
 
             factura.Detalles.Clear();
 
@@ -75,18 +79,50 @@ namespace EInvoiceSolution.Core.Invoices.Mappers
                 };
 
                 // Impuestos por detalle
-                detalle.Impuestos = new Collection<FacturaDetallesDetalleImpuestosImpuesto>(
-                    item.Taxes.Select(t => new FacturaDetallesDetalleImpuestosImpuesto
+                foreach (var tax in item.Taxes ?? new List<TaxesModel>())
+                {
+                    var impuesto = new Impuesto
                     {
-                        Codigo = t.TaxCode,
-                        CodigoPorcentaje = t.PercentageCode,
-                        Tarifa = t.Rate,
-                        BaseImponible = t.TaxableBase,
-                        Valor = t.Value
-                    }).ToList()
-                );
+                        Codigo = tax.TaxCode,
+                        CodigoPorcentaje = tax.PercentageCode,
+                        Tarifa = tax.Rate,
+                        BaseImponible = tax.TaxableBase,
+                        Valor = tax.Value
+                    };
+                    detalle.Impuestos.Add(impuesto);
+                }
+
 
                 factura.Detalles.Add(detalle);
+            }
+
+            // Pagos (si existen)
+
+            if (invoiceModel.Payments != null && invoiceModel.Payments.Any())
+            {
+                foreach (var payment in invoiceModel.Payments)
+                {
+                    factura.InfoFactura.Pagos.Add(new PagosPago
+                    {
+                        FormaPago = payment.Method,
+                        Total = payment.Amount,
+                        Plazo = payment.Term,
+                        UnidadTiempo = payment.TimeUnit
+                    });
+                }
+            }
+
+            // Campos Adicionales (si existen)
+            if (invoiceModel.AdditionalFields != null && invoiceModel.AdditionalFields.Any())
+            {
+                foreach (var field in invoiceModel.AdditionalFields)
+                {
+                    factura.InfoAdicional.Add(new FacturaInfoAdicionalCampoAdicional
+                    {
+                        Nombre = field.Name,
+                        Value = field.Value
+                    });
+                }
             }
 
             return factura;
