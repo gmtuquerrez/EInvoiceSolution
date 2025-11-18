@@ -1,6 +1,7 @@
 using EInvoice.Api.Common.Security;
 using EInvoice.Infrastructure.Db;
 using EInvoice.Infrastructure.Identity;
+using EInvoice.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
