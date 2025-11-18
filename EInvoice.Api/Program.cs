@@ -22,11 +22,23 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IUserProvider, HttpContextUserProvider>();
 
 // DbContext
+
+var connectionString = builder.Configuration
+    .GetSection("Configurations:ConnectionStrings:EInvoiceDb")
+    .Value;
+
 builder.Services.AddDbContext<EInvoiceDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("EInvoiceDb")));
+    options.UseNpgsql(connectionString));
+
+
+builder.Services.AddDbContext<EInvoiceDbContext>(options =>
+    options.UseNpgsql(connectionString));
 
 // Repositories
 builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+
+// Agregar acceso a HttpContext
+builder.Services.AddHttpContextAccessor();
 
 // Services
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();

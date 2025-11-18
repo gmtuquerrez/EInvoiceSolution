@@ -26,16 +26,17 @@ namespace EInvoice.Services
                 Establishment = model.Establishment,
                 EmissionPoint = model.EmissionPoint,
                 Sequential = model.Sequential,
-                IssueDate = model.IssueDate,
-                Ruc = model.Ruc,
+                IssueDate = model.IssueDate.ToUniversalTime(),
                 TotalAmount = model.TotalAmount,
                 CustomerId = model.Customer.Id,  // Asumes Customer ya existe
 
                 JsonData = JsonConvert.SerializeObject(model),
 
                 StatusId = 1,   // "CREATED"
+                CreatedAt = DateTime.UtcNow,   // <-- UTC
                 CreatedBy = createdBy,
-                UpdatedBy = createdBy,
+                UpdatedAt = DateTime.UtcNow,   // <-- UTC
+                UpdatedBy = createdBy
             };
 
             // 2. Guardamos en base
