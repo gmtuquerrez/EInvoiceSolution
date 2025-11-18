@@ -2,6 +2,7 @@
 {
     public class CustomerModel
     {
+        public long Id { get; set; }
         public string IdentificationType { get; set; } // 04 = RUC, 05 = Cédula
         public string Identification { get; set; }
         public string Name { get; set; }

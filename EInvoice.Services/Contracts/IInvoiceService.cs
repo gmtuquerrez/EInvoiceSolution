@@ -1,9 +1,10 @@
-﻿using EInvoice.Infrastructure.Domain.Entities;
+﻿using EInvoiceSolution.Core.Invoices.Models;
+using EInvoiceSolution.Core.Invoices.Models.Response;
 
 namespace EInvoice.Services.Contracts
 {
     public interface IInvoiceService
     {
-        Task<Invoice> CreateInvoiceAsync(Invoice invoice);
+        Task<InvoiceCreatedResponse> CreateInvoiceAsync(InvoiceModel model, string createdBy);
     }
 }

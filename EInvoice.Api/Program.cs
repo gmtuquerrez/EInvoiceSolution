@@ -2,24 +2,40 @@ using EInvoice.Api.Common.Security;
 using EInvoice.Infrastructure.Db;
 using EInvoice.Infrastructure.Identity;
 using EInvoice.Infrastructure.Repositories;
+using EInvoice.Services;
+using EInvoice.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(options =>
+        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add custom services
-builder.Services.AddScoped<IUserProvider, HttpContextUserProvider>(); // implement in API
+// Custom providers
+builder.Services.AddScoped<IUserProvider, HttpContextUserProvider>();
+
+// DbContext
 builder.Services.AddDbContext<EInvoiceDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("EInvoiceDb")));
+
+// Repositories
 builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 
+// Services
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+
 var app = builder.Build();
+
+// Print current environment
+var env = app.Services.GetRequiredService<IWebHostEnvironment>();
+Console.WriteLine($"Current Environment: {env.EnvironmentName}");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
