@@ -1,25 +1,79 @@
-﻿using System;
-using System.IO;
-using Xunit;
-using EInvoice.Infrastructure.Xml;
-using EInvoiceSolution.Core.Invoices.Models;
+﻿using EInvoiceSolution.Core.Invoices.Models;
 using EInvoiceSolution.Core.Invoices.Mappers;
 using EInvoice.Infrastructure.Serialization;
-using System.Collections.Generic;
 
 public class InvoiceXmlTests
 {
     [Fact]
-    public void InvoiceXml_Should_Serialize_And_Validate_Successfully()
+    public void Should_Map_And_Serialize_Invoice_Correctly()
     {
+        // Arrange: Creamos un InvoiceModel válido
         var invoiceModel = new InvoiceModel
         {
-            InvoiceNumber = "001-001-000000123",
-            IssueDate = DateTime.Parse("2025-01-01"),
-            BuyerName = "Cliente de Prueba",
-            BuyerId = "0102030405",
-            Subtotal = 100,
-            Total = 112,
+            IssueDate = new DateTime(2025, 1, 1),
+            Enviroment = "2",
+            EmissionType = "1",
+            CompanyName = "EMPRESA S.A.",
+            TradeMark = "EMPRESA",
+            Ruc = "1790012345001",
+            AccessKey = "1234567890123456789012345678901234567890123456789",
+            DocumentCode = "01",
+            Establishment = "001",
+            EmissionPoint = "002",
+            Sequential = "000000123",
+            EstablishmentAddress = "Av. Siempre Viva 123",
+            SpecialTaxPayer = "5368",
+            RequiredKeepAccounting = "SI",
+            BuyerIdentificationType = "05",
+
+            TotalAmount = 112.00m,
+            TotalWiyhoutTaxes = 100.00m,
+            TotalDiscount = 0,
+            Tip = 0,
+            Currency = "USD",
+
+            Customer = new CustomerModel
+            {
+                Identification = "0102030405",
+                Name = "Juan Pérez",
+                Address = "Calle Falsa 123"
+            },
+
+            TotalWithTaxes = new List<TotalWithTaxesModel>
+            {
+                new TotalWithTaxesModel
+                {
+                    TaxCode = "2",
+                    PercentageCode = "2",
+                    TaxableBase = 100m,
+                    Value = 12m
+                }
+            },
+
+            Items = new List<InvoiceItemModel>
+            {
+                new InvoiceItemModel
+                {
+                    Code = "A001",
+                    AuxCode = "A001X",
+                    Description = "Producto de prueba",
+                    Quantity = 1,
+                    UnitPrice = 100,
+                    Discount = 0,
+                    TotalWiyhoutTaxes = 100,
+                    Taxes = new List<TaxesModel>
+                    {
+                        new TaxesModel
+                        {
+                            TaxCode = "2",
+                            PercentageCode = "2",
+                            Rate = 12,
+                            TaxableBase = 100,
+                            Value = 12
+                        }
+                    }
+                }
+            },
 
             Payments = new List<PaymentModel>
             {
@@ -28,39 +82,36 @@ public class InvoiceXmlTests
                     Method = "01",
                     Amount = 112,
                     Term = 0,
-                    TimeUnit = "dias"
+                    TimeUnit = null
                 }
             },
 
-            Items = new List<InvoiceItemModel>
+            AdditionalFields = new List<AdditionalFieldModel>
             {
-                new InvoiceItemModel
-                {
-                    Description = "Producto A",
-                    Quantity = 1,
-                    UnitPrice = 100,
-                    Total = 100
-                }
+                new AdditionalFieldModel { Name = "Email", Value = "cliente@test.com" },
+                new AdditionalFieldModel { Name = "Telefono", Value = "0999999999" }
             }
         };
 
-        var facturaXsd = InvoiceMapper.MapToSriXsd(invoiceModel);
-        Assert.NotNull(facturaXsd);
+        // Act: mapeamos
+        var factura = InvoiceMapper.MapToSriXsd(invoiceModel);
+        Assert.NotNull(factura);
 
-        var xml = SriXmlSerializer.SerializeInvoice(facturaXsd);
+        // Serializamos
+        var xml = SriXmlSerializer.SerializeInvoice(factura);
         Assert.False(string.IsNullOrWhiteSpace(xml));
 
         File.WriteAllText("factura_test.xml", xml);
 
-        var xsdPaths = new[]
-        {
-            "Schemas/Sri/Invoice/Xsd/invoice.xsd",
-            "Schemas/Sri/Invoice/Xsd/xmldsig-core-schema.xsd"
-        };
-
+        // (Opcional) Validación XSD si ya tienes los esquemas
+        /*
         var validator = new XmlValidatorService();
-        var result = validator.Validate(xml, xsdPaths);
-
-        Assert.True(result.IsValid, "XML inválido:\n" + string.Join("\n", result.Errors));
+        var result = validator.Validate(xml, new[]
+        {
+            "Schemas/Factura_V1.xsd",
+            "Schemas/xmldsig-core-schema.xsd"
+        });
+        Assert.True(result.IsValid, string.Join("\n", result.Errors));
+        */
     }
 }

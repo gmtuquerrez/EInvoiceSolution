@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="EInvoice.Api/EInvoice.Api.csproj" />
+  <Project Path="EInvoice.Database/EInvoice.Database.csproj" Id="bdfb48b5-3d7f-475f-972e-f8e946386df7" />
   <Project Path="EInvoice.Infrastructure/EInvoice.Infrastructure.csproj" />
   <Project Path="EInvoice.Services/EInvoice.Services.csproj" />
   <Project Path="EInvoice.Tests/EInvoice.Tests.csproj" Id="e7a63919-3752-4eda-b6a8-cb16bd68d328" />
