@@ -66,9 +66,7 @@ namespace EInvoice.Services
                 JsonData = JsonConvert.SerializeObject(model),
 
                 StatusId = 1,   // "CREATED"
-                CreatedBy = createdBy,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
+                CreatedBy = createdBy
             };
 
             // ------------------------------
