@@ -1,4 +1,9 @@
 <Solution>
+  <Folder Name="/Applications/">
+    <Project Path="EInvoiceSolution.SignerConsole/EInvoiceSolution.SignerConsole.csproj" Id="e875bf69-121c-48da-b3f9-2ae71abcdad6" />
+    <Project Path="EInvoiceSolution.SriCheckerConsole/EInvoiceSolution.SriCheckerConsole.csproj" Id="d0099bbc-24f4-445b-a48c-29df8e5f45b3" />
+    <Project Path="EInvoiceSolution.SriSenderConsole/EInvoiceSolution.SriSenderConsole.csproj" Id="1f95f4d5-6669-40ba-b87d-3c7d6070add7" />
+  </Folder>
   <Project Path="EInvoice.Api/EInvoice.Api.csproj" />
   <Project Path="EInvoice.Database/EInvoice.Database.csproj" Id="bdfb48b5-3d7f-475f-972e-f8e946386df7" />
   <Project Path="EInvoice.Infrastructure/EInvoice.Infrastructure.csproj" />
