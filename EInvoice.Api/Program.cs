@@ -1,4 +1,4 @@
-using EInvoice.Api.Common.Security;
+﻿using EInvoice.Api.Common.Security;
 using EInvoice.Infrastructure.Db;
 using EInvoice.Infrastructure.Identity;
 using EInvoice.Infrastructure.Repositories;
@@ -28,20 +28,26 @@ var connectionString = builder.Configuration
     .Value;
 
 builder.Services.AddDbContext<EInvoiceDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseNpgsql(connectionString).EnableSensitiveDataLogging()     // ← IMPORTANTE
+           .EnableDetailedErrors());
 
 
 builder.Services.AddDbContext<EInvoiceDbContext>(options =>
     options.UseNpgsql(connectionString));
 
-// Repositories
-builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
-
 // Agregar acceso a HttpContext
 builder.Services.AddHttpContextAccessor();
 
+// Repositories
+builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<IEmissionPointRepository, EmissionPointRepository>();
+builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+
 // Services
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+
+builder.Logging.AddConsole();
 
 var app = builder.Build();
 

@@ -13,5 +13,6 @@ namespace EInvoice.Infrastructure.Domain.Entities
         public string? LogoBase64 { get; set; }
 
         public ICollection<Establishment> Establishments { get; set; } = new List<Establishment>();
+        public ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
     }
 }

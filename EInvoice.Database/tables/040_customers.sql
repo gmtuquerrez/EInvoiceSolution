@@ -7,6 +7,6 @@ CREATE TABLE einvoice."Customers" (
 
     "CreatedAt" TIMESTAMP NOT NULL DEFAULT NOW(),
     "CreatedBy" VARCHAR(50),
-    "UpdatedAt" TIMESTAMP NOT NULL DEFAULT NOW(),
+    "UpdatedAt" TIMESTAMP NULL,
     "UpdatedBy" VARCHAR(50)
 );

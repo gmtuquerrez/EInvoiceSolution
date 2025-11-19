@@ -6,13 +6,16 @@ namespace EInvoice.Infrastructure.Domain.Entities
     {
         public long Id { get; set; }
 
+        public long CompanyId { get; set; }
+        public Company? Company { get; set; }
+
         public long EmissionPointId { get; set; }
-        public EmissionPoint? EmissionPointRef { get; set; }
+        public EmissionPoint? EmissionPoint { get; set; }
 
         public string AccessKey { get; set; } = null!;
         public string DocumentCode { get; set; } = null!;
-        public string Establishment { get; set; } = null!;
-        public string EmissionPoint { get; set; } = null!;
+        public string EstablishmentCode { get; set; } = null!;
+        public string EmissionPointCode { get; set; } = null!;
         public string Sequential { get; set; } = null!;
 
         public DateTime IssueDate { get; set; }

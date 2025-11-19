@@ -45,11 +45,11 @@ namespace EInvoiceSolution.Core.Invoices.Mappers
                     ObligadoContabilidad = invoiceModel.RequiredKeepAccounting == "SI"
                         ? ObligadoContabilidad.Si
                         : ObligadoContabilidad.No,
-                    TipoIdentificacionComprador = invoiceModel.BuyerIdentificationType,
+                    TipoIdentificacionComprador = invoiceModel.CustomerIdentificationType,
                     IdentificacionComprador = invoiceModel.Customer.Identification,
-                    RazonSocialComprador = invoiceModel.Customer.Name,
+                    RazonSocialComprador = invoiceModel.Customer.FullName,
                     DireccionComprador = invoiceModel.Customer.Address,
-                    TotalSinImpuestos = invoiceModel.TotalWiyhoutTaxes,
+                    TotalSinImpuestos = invoiceModel.TotalWithoutTaxes,
                     TotalDescuento = invoiceModel.TotalDiscount,
                     Propina = invoiceModel.Tip,
                     ImporteTotal = invoiceModel.TotalAmount,
@@ -75,7 +75,7 @@ namespace EInvoiceSolution.Core.Invoices.Mappers
                     Cantidad = item.Quantity,
                     PrecioUnitario = item.UnitPrice,
                     Descuento = item.Discount,
-                    PrecioTotalSinImpuesto = item.TotalWiyhoutTaxes,
+                    PrecioTotalSinImpuesto = item.TotalWithoutTaxes,
                 };
 
                 // Impuestos por detalle

@@ -16,9 +16,10 @@
         public string EstablishmentAddress { get; set; }
         public string SpecialTaxPayer { get; set; }
         public string RequiredKeepAccounting { get; set; }
-        public string BuyerIdentificationType { get; set; }
+        public string CustomerIdentificationType { get; set; }
+        public string CustomerIdentification { get; set; }
         public decimal TotalAmount { get; set; }
-        public decimal TotalWiyhoutTaxes { get; set; }
+        public decimal TotalWithoutTaxes { get; set; }
         public decimal TotalDiscount { get; set; }
         public decimal Tip { get; set; }
         public string Currency { get; set; }

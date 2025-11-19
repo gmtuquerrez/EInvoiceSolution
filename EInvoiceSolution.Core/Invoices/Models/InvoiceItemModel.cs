@@ -8,7 +8,7 @@
         public decimal Quantity { get; set; }
         public decimal UnitPrice { get; set; }
         public decimal Discount { get; set; }
-        public decimal TotalWiyhoutTaxes { get; set; }
+        public decimal TotalWithoutTaxes { get; set; }
         public List<TaxesModel> Taxes { get; set; } = new List<TaxesModel>();
     }
 }

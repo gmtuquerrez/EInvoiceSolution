@@ -6,4 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Include="tables\070_invoice_items.sql" />
+    <Compile Include="tables\090_invoice_payments.sql" />
+    <Compile Include="tables\110_invoice_aditional_fields.sql" />
+  </ItemGroup>
+
 </Project>

@@ -70,9 +70,9 @@ namespace EInvoice.Infrastructure.Db
             {
                 b.ToTable("Customers");
                 b.HasKey(x => x.Id);
-                b.Property(x => x.RucOrId).HasColumnName("RucOrId").IsRequired().HasMaxLength(20);
-                b.Property(x => x.Name).HasColumnName("Name").IsRequired().HasMaxLength(200);
-                b.HasIndex(x => x.RucOrId).IsUnique().HasDatabaseName("UQ_Customers_Identification");
+                b.Property(x => x.Identification).HasColumnName("Identification").IsRequired().HasMaxLength(20);
+                b.Property(x => x.FullName).HasColumnName("FullName").IsRequired().HasMaxLength(200);
+                b.HasIndex(x => x.Identification).IsUnique().HasDatabaseName("UQ_Customers_Identification");
             });
 
             // InvoiceStatus
@@ -83,28 +83,46 @@ namespace EInvoice.Infrastructure.Db
                 b.Property(x => x.Name).HasColumnName("Name").IsRequired().HasMaxLength(40);
             });
 
-            // Invoice
             modelBuilder.Entity<Invoice>(b =>
             {
                 b.ToTable("Invoices");
                 b.HasKey(x => x.Id);
 
-                b.Property(x => x.AccessKey).HasColumnName("AccessKey").HasMaxLength(49).IsRequired();
-                b.Property(x => x.DocumentCode).HasColumnName("DocumentCode").HasMaxLength(3).IsRequired();
-                b.Property(x => x.Establishment).HasColumnName("Establishment").HasMaxLength(3).IsRequired();
-                b.Property(x => x.EmissionPoint).HasColumnName("EmissionPoint").HasMaxLength(3).IsRequired();
-                b.Property(x => x.Sequential).HasColumnName("Sequential").HasMaxLength(20).IsRequired();
-                b.Property(x => x.IssueDate).HasColumnName("IssueDate").IsRequired();
-                b.Property(x => x.AuthorizationDate).HasColumnName("AuthorizationDate");
-                b.Property(x => x.Ruc).HasColumnName("Ruc").HasMaxLength(13).IsRequired();
-                b.Property(x => x.TotalAmount).HasColumnName("TotalAmount").HasColumnType("numeric(18,2)").IsRequired();
+                b.Property(x => x.AccessKey).HasMaxLength(49).IsRequired();
+                b.Property(x => x.DocumentCode).HasMaxLength(3).IsRequired();
+                b.Property(x => x.EstablishmentCode).HasColumnName("Establishment").HasMaxLength(3).IsRequired();
+                b.Property(x => x.EmissionPointCode).HasColumnName("EmissionPoint").HasMaxLength(3).IsRequired();
+                b.Property(x => x.Sequential).HasMaxLength(20).IsRequired();
 
-                b.Property(x => x.JsonData).HasColumnName("JsonData").HasColumnType("jsonb").IsRequired();
+                b.Property(x => x.IssueDate).IsRequired();
+                b.Property(x => x.AuthorizationDate);
 
-                b.HasOne(x => x.Customer).WithMany().HasForeignKey(x => x.CustomerId);
-                b.HasOne(x => x.Status).WithMany().HasForeignKey(x => x.StatusId);
-                b.HasOne(x => x.EmissionPointRef).WithMany().HasForeignKey(x => x.EmissionPointId);
+                b.Property(x => x.Ruc).HasMaxLength(13).IsRequired();
+                b.Property(x => x.TotalAmount).HasColumnType("numeric(18,2)").IsRequired();
+
+                b.Property(x => x.JsonData).HasColumnType("jsonb").IsRequired();
+
+                b.HasOne(x => x.Customer)
+                    .WithMany()
+                    .HasForeignKey(x => x.CustomerId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                b.HasOne(x => x.Status)
+                    .WithMany()
+                    .HasForeignKey(x => x.StatusId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                b.HasOne(x => x.EmissionPoint)
+                    .WithMany()
+                    .HasForeignKey(x => x.EmissionPointId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                b.HasOne(x => x.Company)
+                    .WithMany(c => c.Invoices)       // ← clave
+                    .HasForeignKey(x => x.CompanyId) // ← clave
+                    .OnDelete(DeleteBehavior.Restrict);
             });
+
 
             // InvoiceItem
             modelBuilder.Entity<InvoiceItem>(b =>
@@ -177,15 +195,33 @@ namespace EInvoice.Infrastructure.Db
 
         private void ApplyAudit()
         {
-            var now = DateTime.UtcNow;
+            var now = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
             var user = _userProvider?.GetCurrentUser() ?? "SYSTEM";
 
             foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
             {
+                // --- CORRIGE DateTime.Unspecified -> UTC ---
+                foreach (var prop in entry.Properties.Where(p =>
+                    p.Metadata.ClrType == typeof(DateTime) ||
+                    p.Metadata.ClrType == typeof(DateTime?)))
+                {
+                    if (prop.CurrentValue is DateTime dt)
+                    {
+                        if (dt.Kind == DateTimeKind.Unspecified)
+                        {
+                            // Normalizar a UTC
+                            prop.CurrentValue = DateTime.SpecifyKind(dt, DateTimeKind.Utc);
+                        }
+                    }
+                }
+
+                // --- AUDITORÍA ---
                 if (entry.State == EntityState.Added)
                 {
                     entry.Entity.CreatedAt = now;
                     entry.Entity.CreatedBy ??= user;
+                    entry.Entity.UpdatedAt = now;
+                    entry.Entity.UpdatedBy = user;
                 }
                 else if (entry.State == EntityState.Modified)
                 {
@@ -194,5 +230,7 @@ namespace EInvoice.Infrastructure.Db
                 }
             }
         }
+
+
     }
 }

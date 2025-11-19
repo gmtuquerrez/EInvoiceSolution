@@ -1,6 +1,7 @@
 CREATE TABLE einvoice."Invoices" ( 
     "Id" BIGSERIAL PRIMARY KEY,
 
+    "CompanyId" BIGINT NOT NULL REFERENCES einvoice."Company"("Id"),
     "EmissionPointId" BIGINT NOT NULL REFERENCES einvoice."EmissionPoint"("Id"),
 
     "AccessKey" VARCHAR(49) NOT NULL,
@@ -26,6 +27,6 @@ CREATE TABLE einvoice."Invoices" (
 
     "CreatedAt" TIMESTAMP NOT NULL DEFAULT NOW(),
     "CreatedBy" VARCHAR(50),
-    "UpdatedAt" TIMESTAMP NOT NULL DEFAULT NOW(),
+    "UpdatedAt" TIMESTAMP NULL,
     "UpdatedBy" VARCHAR(50)
 );

@@ -24,10 +24,11 @@ public class InvoiceXmlTests
             EstablishmentAddress = "Av. Siempre Viva 123",
             SpecialTaxPayer = "5368",
             RequiredKeepAccounting = "SI",
-            BuyerIdentificationType = "05",
+            CustomerIdentificationType = "05",
+            CustomerIdentification = "1452588747",
 
             TotalAmount = 112.00m,
-            TotalWiyhoutTaxes = 100.00m,
+            TotalWithoutTaxes = 100.00m,
             TotalDiscount = 0,
             Tip = 0,
             Currency = "USD",
@@ -35,7 +36,7 @@ public class InvoiceXmlTests
             Customer = new CustomerModel
             {
                 Identification = "0102030405",
-                Name = "Juan Pérez",
+                FullName = "Juan Pérez",
                 Address = "Calle Falsa 123"
             },
 
@@ -60,7 +61,7 @@ public class InvoiceXmlTests
                     Quantity = 1,
                     UnitPrice = 100,
                     Discount = 0,
-                    TotalWiyhoutTaxes = 100,
+                    TotalWithoutTaxes = 100,
                     Taxes = new List<TaxesModel>
                     {
                         new TaxesModel
