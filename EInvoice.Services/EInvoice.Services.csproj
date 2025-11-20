@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EInvoice.Infrastructure\EInvoice.Infrastructure.csproj" />
     <ProjectReference Include="..\EInvoiceSolution.Core\EInvoiceSolution.Core.csproj" />
   </ItemGroup>
 

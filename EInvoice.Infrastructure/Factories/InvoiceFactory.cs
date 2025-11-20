@@ -1,8 +1,9 @@
 ﻿using EInvoice.Infrastructure.Domain.Entities;
 using EInvoiceSolution.Core.Invoices.Models;
+using EInvoiceSolution.Core.Invoices.Models.Dtos;
 using Newtonsoft.Json;
 
-namespace EInvoiceSolution.Core.Invoices.Factories
+namespace EInvoice.Infrastructure.Factories
 {
     public static class InvoiceFactory
     {
@@ -63,6 +64,31 @@ namespace EInvoiceSolution.Core.Invoices.Factories
             }
 
             return invoice;
+        }
+
+        public static InvoiceHeaderDto ToHeaderDto(this Invoice invoice)
+        {
+            return new InvoiceHeaderDto
+            {
+                Id = invoice.Id,
+                AccessKey = invoice.AccessKey,
+                DocumentCode = invoice.DocumentCode,
+                EstablishmentCode = invoice.EstablishmentCode,
+                EmissionPointCode = invoice.EmissionPointCode,
+                Sequential = invoice.Sequential,
+                IssueDate = invoice.IssueDate,
+                Ruc = invoice.Ruc,
+                TotalAmount = invoice.TotalAmount,
+                CustomerId = invoice.CustomerId,
+                CompanyId = invoice.CompanyId,
+                EmissionPointId = invoice.EmissionPointId,
+                JsonData = invoice.JsonData,
+                StatusId = invoice.StatusId,
+                XmlGenerated = invoice.XmlGenerated,
+                XmlSigned = invoice.XmlSigned,
+                XmlAuthorized = invoice.XmlAuthorized,
+                SriResponse = invoice.SriResponse
+            };
         }
     }
 }

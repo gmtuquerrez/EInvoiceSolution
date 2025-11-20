@@ -1,5 +1,7 @@
-﻿using EInvoice.Infrastructure.Sri.Invoice.Generated;
+﻿using EInvoice.Infrastructure.Domain.Entities;
+using EInvoice.Infrastructure.Sri.Invoice.Generated;
 using EInvoiceSolution.Core.Invoices.Models;
+using EInvoiceSolution.Core.Invoices.Models.Dtos;
 using System.Collections.ObjectModel;
 
 namespace EInvoiceSolution.Core.Invoices.Mappers
@@ -126,6 +128,31 @@ namespace EInvoiceSolution.Core.Invoices.Mappers
             }
 
             return factura;
+        }
+
+        public static InvoiceHeaderDto ToHeaderDto(this Invoice invoice)
+        {
+            return new InvoiceHeaderDto
+            {
+                Id = invoice.Id,
+                AccessKey = invoice.AccessKey,
+                DocumentCode = invoice.DocumentCode,
+                EstablishmentCode = invoice.EstablishmentCode,
+                EmissionPointCode = invoice.EmissionPointCode,
+                Sequential = invoice.Sequential,
+                IssueDate = invoice.IssueDate,
+                Ruc = invoice.Ruc,
+                TotalAmount = invoice.TotalAmount,
+                CustomerId = invoice.CustomerId,
+                CompanyId = invoice.CompanyId,
+                EmissionPointId = invoice.EmissionPointId,
+                JsonData = invoice.JsonData,
+                StatusId = invoice.StatusId,
+                XmlGenerated = invoice.XmlGenerated,
+                XmlSigned = invoice.XmlSigned,
+                XmlAuthorized = invoice.XmlAuthorized,
+                SriResponse = invoice.SriResponse
+            };
         }
     }
 }
