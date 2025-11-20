@@ -23,13 +23,24 @@ namespace EInvoice.Api.Controllers
 
             try
             {
-                var invoice = await _invoiceService.CreateInvoiceAsync(invoiceModel, createdBy);
-                return Ok(new { invoice.InvoiceId, invoice.AccessKey, Status = invoice.Status });
+                var result = await _invoiceService.CreateInvoiceAsync(invoiceModel, createdBy);
+
+                if (!result.Success)
+                    return BadRequest(result.Errors);
+
+                return Ok(new
+                {
+                    result.Data?.InvoiceId,
+                    result.Data?.AccessKey,
+                    result.Data?.Status
+                });
             }
             catch (Exception ex)
             {
+                // Solo para errores inesperados
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
     }
 }

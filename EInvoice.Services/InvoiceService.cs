@@ -1,10 +1,9 @@
-﻿using EInvoice.Infrastructure.Domain.Entities;
-using EInvoice.Infrastructure.Repositories;
+﻿using EInvoice.Infrastructure.Repositories;
 using EInvoice.Services.Contracts;
 using EInvoiceSolution.Core.Invoices.Factories;
 using EInvoiceSolution.Core.Invoices.Models;
 using EInvoiceSolution.Core.Invoices.Models.Response;
-using Newtonsoft.Json;
+using EInvoiceSolution.Core.Shared;
 
 namespace EInvoice.Services
 {
@@ -26,44 +25,39 @@ namespace EInvoice.Services
             _companyRepository = companyRepository;
         }
 
-        public async Task<InvoiceCreatedResponse> CreateInvoiceAsync(InvoiceModel model, string createdBy)
+        public async Task<OperationalResult<InvoiceCreatedResponse>> CreateInvoiceAsync(InvoiceModel model, string createdBy)
         {
             // Validar customer
             var customer = await _customerRepository.GetByIdentificationAsync(model.CustomerIdentification);
-
             if (customer == null)
-                throw new Exception("Customer not found.");
+                return OperationalResult<InvoiceCreatedResponse>.Fail("Customer not found.");
 
             // Validar company
             var company = await _companyRepository.GetByRucAsync(model.Ruc);
             if (company == null)
-                throw new Exception("Company not found.");
+                return OperationalResult<InvoiceCreatedResponse>.Fail("Company not found.");
 
-            // Validar punto de emision
+            // Validar punto de emisión
             var emissionPoint = await _emissionPointRepository.GetByCodeAndCompanyAsync(model.Establishment, company.Id);
             if (emissionPoint == null)
-                throw new Exception("EmissionPoint not found.");
+                return OperationalResult<InvoiceCreatedResponse>.Fail("EmissionPoint not found.");
 
-            // Mapeo externo (factory)
-            var invoice = InvoiceFactory.CreateEntity(
-                model,
-                customer.Id,
-                company.Id,
-                emissionPoint.Id
-            );
-
+            // Mapeo usando factory
+            var invoice = InvoiceFactory.CreateEntity(model, customer.Id, company.Id, emissionPoint.Id);
             invoice.CreatedBy = createdBy;
 
-            // 2. Guardamos en base
+            // Guardar en base
             var created = await _invoiceRepository.CreateAsync(invoice);
 
-            // 3. Response limpio
-            return new InvoiceCreatedResponse
+            // Retornar resultado exitoso
+            var response = new InvoiceCreatedResponse
             {
                 InvoiceId = created.Id,
                 AccessKey = created.AccessKey,
                 Status = "CREATED"
             };
+
+            return OperationalResult<InvoiceCreatedResponse>.Ok(response);
         }
     }
 }
