@@ -1,6 +1,7 @@
 ﻿using EInvoice.Infrastructure.Domain.Entities;
 using EInvoice.Infrastructure.Repositories;
 using EInvoice.Services.Contracts;
+using EInvoiceSolution.Core.Invoices.Factories;
 using EInvoiceSolution.Core.Invoices.Models;
 using EInvoiceSolution.Core.Invoices.Models.Response;
 using Newtonsoft.Json;
@@ -43,66 +44,15 @@ namespace EInvoice.Services
             if (emissionPoint == null)
                 throw new Exception("EmissionPoint not found.");
 
-            // Mapear InvoiceModel → Entity Invoice
-            var invoice = new Invoice
-            {
-                AccessKey = model.AccessKey,
-                DocumentCode = model.DocumentCode,
-                EstablishmentCode = model.Establishment,
-                EmissionPointCode = model.EmissionPoint,
-                Sequential = model.Sequential,
+            // Mapeo externo (factory)
+            var invoice = InvoiceFactory.CreateEntity(
+                model,
+                customer.Id,
+                company.Id,
+                emissionPoint.Id
+            );
 
-                IssueDate = DateTime.SpecifyKind(model.IssueDate, DateTimeKind.Utc),
-
-                Ruc = model.Ruc,
-                TotalAmount = model.TotalAmount,
-
-                CustomerId = customer.Id,
-
-                CompanyId = company.Id,
-
-                EmissionPointId = emissionPoint.Id,
-
-                JsonData = JsonConvert.SerializeObject(model),
-
-                StatusId = 1,   // "CREATED"
-                CreatedBy = createdBy
-            };
-
-            // ------------------------------
-            // 🔹 Crear items de la factura
-            // ------------------------------
-            foreach (var itemModel in model.Items)
-            {
-                var item = new InvoiceItem
-                {
-                    Code = itemModel.Code,
-                    AuxCode = itemModel.AuxCode,
-                    Description = itemModel.Description,
-                    Quantity = itemModel.Quantity,
-                    UnitPrice = itemModel.UnitPrice,
-                    Discount = itemModel.Discount,
-                    TotalWithoutTaxes = itemModel.TotalWithoutTaxes
-                };
-
-                // ------------------------------
-                // 🔹 Crear impuestos del item
-                // ------------------------------
-                foreach (var taxModel in itemModel.Taxes)
-                {
-                    item.Taxes.Add(new InvoiceItemTax
-                    {
-                        TaxCode = taxModel.TaxCode,
-                        PercentageCode = taxModel.PercentageCode,
-                        Rate = taxModel.Rate,
-                        TaxableBase = taxModel.TaxableBase,
-                        Value = taxModel.Value
-                    });
-                }
-
-                invoice.Items.Add(item);
-            }
-
+            invoice.CreatedBy = createdBy;
 
             // 2. Guardamos en base
             var created = await _invoiceRepository.CreateAsync(invoice);
