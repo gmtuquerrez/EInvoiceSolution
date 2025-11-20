@@ -26,7 +26,7 @@ namespace EInvoice.Api.Controllers
                 var result = await _invoiceService.CreateInvoiceAsync(invoiceModel, createdBy);
 
                 if (!result.Success)
-                    return BadRequest(result.Errors);
+                    return BadRequest(new { Errors = result.Errors });
 
                 return Ok(new
                 {
