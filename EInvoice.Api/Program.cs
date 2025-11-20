@@ -28,7 +28,7 @@ var connectionString = builder.Configuration
     .Value;
 
 builder.Services.AddDbContext<EInvoiceDbContext>(options =>
-    options.UseNpgsql(connectionString).EnableSensitiveDataLogging()     // ← IMPORTANTE
+    options.UseNpgsql(connectionString).EnableSensitiveDataLogging()     // ← DELETE
            .EnableDetailedErrors());
 
 

@@ -1,4 +1,4 @@
-﻿using EInvoice.Infrastructure.Factories;
+﻿using EInvoice.Infrastructure.Factories.Invoices;
 using EInvoice.Infrastructure.Repositories;
 using EInvoice.Services.Contracts;
 using EInvoiceSolution.Core.Invoices.Models;
@@ -62,17 +62,17 @@ namespace EInvoice.Services
             return OperationalResult<InvoiceCreatedResponse>.Ok(response);
         }
 
-        public async Task<OperationalResult<List<InvoiceHeaderDto>>> GetInvoicesByCriteriaAsync(InvoiceCriteria criteria)
+        public async Task<OperationalResult<PagedResult<InvoiceHeaderDto>>> GetInvoicesByCriteriaAsync(InvoiceCriteria criteria)
         {
             try
             {
                 var invoices = await _invoiceRepository.GetInvoicesByCriteriaAsync(criteria);
 
-                return OperationalResult<List<InvoiceHeaderDto>>.Ok(invoices);
+                return OperationalResult<PagedResult<InvoiceHeaderDto>>.Ok(invoices);
             }
             catch (Exception ex)
             {
-                return OperationalResult<List<InvoiceHeaderDto>>.Fail(message: ex.Message);
+                return OperationalResult<PagedResult<InvoiceHeaderDto>>.Fail(message: ex.Message);
             }
         }
     }

@@ -28,4 +28,11 @@
 		</Content>
 	</ItemGroup>
 
+
+	<ItemGroup>
+	  <Folder Include="Utils\" />
+	  <Folder Include="Workers\" />
+	  <Folder Include="Services\" />
+	</ItemGroup>
+
 </Project>

@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EInvoiceSolution.Core\EInvoiceSolution.Core.csproj" />
+    <ProjectReference Include="..\EInvoice.Infrastructure\EInvoice.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

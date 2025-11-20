@@ -1,6 +1,7 @@
-﻿namespace EInvoiceSolution.Core.Invoices.Models.Filters
+﻿
+namespace EInvoiceSolution.Core.Invoices.Models.Filters
 {
-    public class InvoiceCriteria
+    public class InvoiceCriteria : BaseCriteria
     {
         public long? CompanyId { get; set; }
         public string? CompanyName { get; set; }

@@ -3,7 +3,7 @@ using EInvoiceSolution.Core.Invoices.Models;
 using EInvoiceSolution.Core.Invoices.Models.Dtos;
 using Newtonsoft.Json;
 
-namespace EInvoice.Infrastructure.Factories
+namespace EInvoice.Infrastructure.Factories.Invoices
 {
     public static class InvoiceFactory
     {

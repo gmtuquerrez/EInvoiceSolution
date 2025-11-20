@@ -4,7 +4,7 @@ using EInvoiceSolution.Core.Invoices.Models;
 using EInvoiceSolution.Core.Invoices.Models.Dtos;
 using System.Collections.ObjectModel;
 
-namespace EInvoiceSolution.Core.Invoices.Mappers
+namespace EInvoice.Infrastructure.Mappers.Invoices
 {
     public static class InvoiceMapper
     {

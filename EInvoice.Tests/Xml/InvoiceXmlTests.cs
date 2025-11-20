@@ -1,6 +1,6 @@
-﻿using EInvoiceSolution.Core.Invoices.Models;
-using EInvoiceSolution.Core.Invoices.Mappers;
+﻿using EInvoice.Infrastructure.Mappers.Invoices;
 using EInvoice.Infrastructure.Serialization;
+using EInvoiceSolution.Core.Invoices.Models;
 
 public class InvoiceXmlTests
 {

@@ -10,6 +10,6 @@ namespace EInvoice.Services.Contracts
     {
         Task<OperationalResult<InvoiceCreatedResponse>> CreateInvoiceAsync(InvoiceModel model, string createdBy);
 
-        Task<OperationalResult<List<InvoiceHeaderDto>>> GetInvoicesByCriteriaAsync(InvoiceCriteria criteria);
+        Task<OperationalResult<PagedResult<InvoiceHeaderDto>>> GetInvoicesByCriteriaAsync(InvoiceCriteria criteria);
     }
 }

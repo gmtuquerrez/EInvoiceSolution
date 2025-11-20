@@ -1,8 +1,9 @@
 ﻿using EInvoice.Infrastructure.Db;
 using EInvoice.Infrastructure.Domain.Entities;
-using EInvoice.Infrastructure.Factories;
+using EInvoice.Infrastructure.Factories.Invoices;
 using EInvoiceSolution.Core.Invoices.Models.Dtos;
 using EInvoiceSolution.Core.Invoices.Models.Filters;
+using EInvoiceSolution.Core.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace EInvoice.Infrastructure.Repositories
@@ -27,14 +28,14 @@ namespace EInvoice.Infrastructure.Repositories
             return invoice;
         }
 
-        public async Task<List<InvoiceHeaderDto>> GetInvoicesByCriteriaAsync(InvoiceCriteria criteria)
+        public async Task<PagedResult<InvoiceHeaderDto>> GetInvoicesByCriteriaAsync(InvoiceCriteria criteria)
         {
             var query = _context.Invoices
                 .Include(i => i.Status)
                 .Include(i => i.Company)
                 .AsQueryable();
 
-            // --- STATUS (name OR id) ---
+            // Filtering based on criteria
             if (!string.IsNullOrWhiteSpace(criteria.StatusName))
             {
                 var name = criteria.StatusName.ToLower();
@@ -45,7 +46,6 @@ namespace EInvoice.Infrastructure.Repositories
                 query = query.Where(i => i.StatusId == criteria.StatusId.Value);
             }
 
-            // --- COMPANY (name OR id) ---
             if (!string.IsNullOrWhiteSpace(criteria.CompanyName))
             {
                 var name = criteria.CompanyName.ToLower();
@@ -56,7 +56,6 @@ namespace EInvoice.Infrastructure.Repositories
                 query = query.Where(i => i.CompanyId == criteria.CompanyId.Value);
             }
 
-            // --- DATE FILTERS ---
             if (criteria.StartDate.HasValue)
             {
                 query = query.Where(i => i.CreatedAt >= criteria.StartDate.Value);
@@ -68,11 +67,27 @@ namespace EInvoice.Infrastructure.Repositories
                 query = query.Where(i => i.CreatedAt <= end);
             }
 
-            // --- RETURN DTO ---
-            return await query
+            // Total records for pagination
+            var totalRecords = await query.CountAsync();
+
+            // --- PAGINADO ---
+            var skip = (criteria.PageNumber - 1) * criteria.PageSize;
+
+            var records = await query
                 .AsNoTracking()
+                .OrderByDescending(i => i.CreatedAt)
+                .Skip(skip)
+                .Take(criteria.PageSize)
                 .Select(i => i.ToHeaderDto())
                 .ToListAsync();
+
+            return new PagedResult<InvoiceHeaderDto>
+            {
+                Records = records,
+                TotalRecords = totalRecords,
+                PageNumber = criteria.PageNumber,
+                PageSize = criteria.PageSize
+            };
         }
     }
 }
