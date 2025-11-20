@@ -1,13 +1,17 @@
-﻿CREATE TABLE "InvoiceAdditionalFields" (
-    "Id" BIGSERIAL PRIMARY KEY,
+﻿-- einvoice."InvoiceAdditionalFields" definition
 
-    "Name" VARCHAR(100) NOT NULL,
-    "Value" VARCHAR(500) NOT NULL,
+-- Drop table
 
-    "InvoiceId" BIGINT NOT NULL,
+-- DROP TABLE "InvoiceAdditionalFields";
 
-    CONSTRAINT "FK_InvoiceAdditionalFields_Invoices_InvoiceId"
-        FOREIGN KEY ("InvoiceId")
-        REFERENCES "Invoices" ("Id")
-        ON DELETE CASCADE
-);
+CREATE TABLE einvoice."InvoiceAdditionalFields" ( 
+	"Id" bigserial NOT NULL, 
+	"Name" varchar(100) NOT NULL, 
+	"Value" varchar(500) NOT NULL, 
+	"InvoiceId" int8 NOT NULL, 
+	CONSTRAINT "InvoiceAdditionalFields_pkey" PRIMARY KEY ("Id"));
+
+
+-- einvoice."InvoiceAdditionalFields" foreign keys
+
+ALTER TABLE einvoice."InvoiceAdditionalFields" ADD CONSTRAINT "FK_InvoiceAdditionalFields_Invoices_InvoiceId" FOREIGN KEY ("InvoiceId") REFERENCES "Invoices"("Id") ON DELETE CASCADE;

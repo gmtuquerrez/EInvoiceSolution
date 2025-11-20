@@ -1,13 +1,20 @@
-CREATE TABLE einvoice."Company" (
-    "Id" BIGSERIAL PRIMARY KEY,
-    "Ruc" VARCHAR(13) NOT NULL UNIQUE,
-    "Name" VARCHAR(200) NOT NULL,
-    "SignatureBase64" TEXT NOT NULL,
-    "SignaturePassword" VARCHAR(100) NOT NULL,
-    "LogoBase64" TEXT NULL,
+-- einvoice."Company" definition
 
-    "CreatedAt" TIMESTAMP NOT NULL DEFAULT NOW(),
-    "CreatedBy" VARCHAR(50),
-    "UpdatedAt" TIMESTAMP NULL,
-    "UpdatedBy" VARCHAR(50)
-);
+-- Drop table
+
+-- DROP TABLE "Company";
+
+CREATE TABLE einvoice."Company" ( 
+	"Id" bigserial NOT NULL, 
+	"Ruc" varchar(13) NOT NULL, 
+	"BusinessName" varchar(200) NOT NULL, 
+	"TradeName" varchar(200) NULL, 
+	"SignatureBase64" text NOT NULL, 
+	"SignaturePassword" varchar(200) NOT NULL, 
+	"LogoBase64" text NULL, 
+	"CreatedAt" timestamp DEFAULT now() NOT NULL, 
+	"CreatedBy" varchar(50) NULL, 
+	"UpdatedAt" timestamp NULL, 
+	"UpdatedBy" varchar(50) NULL, 
+	CONSTRAINT "Company_Ruc_key" UNIQUE ("Ruc"), 
+	CONSTRAINT "Company_pkey" PRIMARY KEY ("Id"));

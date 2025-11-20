@@ -1,19 +1,22 @@
-﻿CREATE TABLE "InvoiceItems" (
-    "Id" BIGSERIAL PRIMARY KEY,
+﻿-- einvoice."InvoiceItems" definition
 
-    "Code" VARCHAR(50) NOT NULL,
-    "AuxCode" VARCHAR(50),
-    "Description" VARCHAR(300) NOT NULL,
+-- Drop table
 
-    "Quantity" numeric(18,6) NOT NULL,
-    "UnitPrice" numeric(18,6) NOT NULL,
-    "Discount" numeric(18,6) NOT NULL,
-    "TotalWithoutTaxes" numeric(18,6) NOT NULL,
+-- DROP TABLE "InvoiceItems";
 
-    "InvoiceId" BIGINT NOT NULL,
+CREATE TABLE einvoice."InvoiceItems" ( 
+"Id" bigserial NOT NULL, 
+"Code" varchar(50) NOT NULL, 
+"AuxCode" varchar(50) NULL, 
+"Description" varchar(300) NOT NULL, 
+"Quantity" numeric(18, 6) NOT NULL, 
+"UnitPrice" numeric(18, 6) NOT NULL, 
+"Discount" numeric(18, 6) NOT NULL, 
+"TotalWithoutTaxes" numeric(18, 6) NOT NULL, 
+"InvoiceId" int8 NOT NULL, CONSTRAINT 
+"InvoiceItems_pkey" PRIMARY KEY ("Id"));
 
-    CONSTRAINT "FK_InvoiceItems_Invoices_InvoiceId"
-        FOREIGN KEY ("InvoiceId")
-        REFERENCES "Invoices" ("Id")
-        ON DELETE CASCADE
-);
+
+-- einvoice."InvoiceItems" foreign keys
+
+ALTER TABLE einvoice."InvoiceItems" ADD CONSTRAINT "FK_InvoiceItems_Invoices_InvoiceId" FOREIGN KEY ("InvoiceId") REFERENCES "Invoices"("Id") ON DELETE CASCADE;

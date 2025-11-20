@@ -1,32 +1,38 @@
+-- einvoice."Invoices" definition
+
+-- Drop table
+
+-- DROP TABLE "Invoices";
+
 CREATE TABLE einvoice."Invoices" ( 
-    "Id" BIGSERIAL PRIMARY KEY,
+	"Id" bigserial NOT NULL, 
+	"EmissionPointId" int8 NOT NULL, 
+	"CustomerId" int8 NOT NULL, "StatusId" int8 NOT NULL, 
+	"AccessKey" varchar(49) NOT NULL, 
+	"DocumentCode" varchar(3) NOT NULL, 
+	"Establishment" varchar(3) NOT NULL, 
+	"EmissionPoint" varchar(3) NOT NULL, 
+	"Sequential" varchar(20) NOT NULL, 
+	"IssueDate" timestamp NOT NULL, 
+	"AuthorizationDate" timestamp NULL, 
+	"Ruc" varchar(13) NOT NULL, 
+	"TotalAmount" numeric(18, 2) NOT NULL, 
+	"JsonData" jsonb NOT NULL, 
+	"XmlGenerated" text NULL, 
+	"XmlSigned" text NULL, 
+	"XmlAuthorized" text NULL, 
+	"SriResponse" text NULL, 
+	"CreatedAt" timestamp DEFAULT now() NOT NULL, 
+	"CreatedBy" varchar(50) NULL, 
+	"UpdatedAt" timestamp NULL, 
+	"UpdatedBy" varchar(50) NULL, 
+	"CompanyId" int8 NOT NULL, 
+	CONSTRAINT "Invoices_pkey" PRIMARY KEY ("Id"));
 
-    "CompanyId" BIGINT NOT NULL REFERENCES einvoice."Company"("Id"),
-    "EmissionPointId" BIGINT NOT NULL REFERENCES einvoice."EmissionPoint"("Id"),
 
-    "AccessKey" VARCHAR(49) NOT NULL,
-    "DocumentCode" VARCHAR(3) NOT NULL,
-    "Establishment" VARCHAR(3) NOT NULL,
-    "EmissionPoint" VARCHAR(3) NOT NULL,
-    "Sequential" VARCHAR(20) NOT NULL,
+-- einvoice."Invoices" foreign keys
 
-    "IssueDate" TIMESTAMP NOT NULL,
-    "AuthorizationDate" TIMESTAMP NULL,
-    "Ruc" VARCHAR(13) NOT NULL,
-    "TotalAmount" DECIMAL(18,2) NOT NULL,
-
-    "CustomerId" BIGINT NOT NULL REFERENCES einvoice."Customers"("Id"),
-
-    "JsonData" JSONB NOT NULL,
-    "XmlGenerated" TEXT NULL,
-    "XmlSigned" TEXT NULL,
-    "XmlAuthorized" TEXT NULL,
-    "SriResponse" TEXT NULL,
-
-    "StatusId" BIGINT NOT NULL REFERENCES einvoice."InvoiceStatus"("Id"),
-
-    "CreatedAt" TIMESTAMP NOT NULL DEFAULT NOW(),
-    "CreatedBy" VARCHAR(50),
-    "UpdatedAt" TIMESTAMP NULL,
-    "UpdatedBy" VARCHAR(50)
-);
+ALTER TABLE einvoice."Invoices" ADD CONSTRAINT "FK_Invoices_Companies_CompanyId" FOREIGN KEY ("CompanyId") REFERENCES "Company"("Id");
+ALTER TABLE einvoice."Invoices" ADD CONSTRAINT "Invoices_CustomerId_fkey" FOREIGN KEY ("CustomerId") REFERENCES "Customers"("Id");
+ALTER TABLE einvoice."Invoices" ADD CONSTRAINT "Invoices_EmissionPointId_fkey" FOREIGN KEY ("EmissionPointId") REFERENCES "EmissionPoint"("Id");
+ALTER TABLE einvoice."Invoices" ADD CONSTRAINT "Invoices_StatusId_fkey" FOREIGN KEY ("StatusId") REFERENCES "InvoiceStatus"("Id");
