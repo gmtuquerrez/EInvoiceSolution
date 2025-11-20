@@ -3,6 +3,7 @@ using EInvoice.Infrastructure.Repositories;
 using EInvoice.Services.Contracts;
 using EInvoiceSolution.Core.Invoices.Models;
 using EInvoiceSolution.Core.Invoices.Models.Dtos;
+using EInvoiceSolution.Core.Invoices.Models.Filters;
 using EInvoiceSolution.Core.Invoices.Models.Response;
 using EInvoiceSolution.Core.Shared;
 
@@ -61,35 +62,11 @@ namespace EInvoice.Services
             return OperationalResult<InvoiceCreatedResponse>.Ok(response);
         }
 
-        public async Task<OperationalResult<List<InvoiceHeaderDto>>> GetInvoicesByCriteriaAsync(int? statusId = null, long? companyId = null, string? ruc = null, int? daysBack = null, DateTime? startDate = null, DateTime? endDate = null)
+        public async Task<OperationalResult<List<InvoiceHeaderDto>>> GetInvoicesByCriteriaAsync(InvoiceCriteria criteria)
         {
             try
             {
-                var query = _invoiceRepository.Query(); // IQueryable<Invoice>
-
-                if (statusId.HasValue)
-                    query = query.Where(i => i.StatusId == statusId.Value);
-
-                if (companyId.HasValue)
-                    query = query.Where(i => i.CompanyId == companyId.Value);
-
-                if (!string.IsNullOrEmpty(ruc))
-                    query = query.Where(i => i.Ruc == ruc);
-
-                if (daysBack.HasValue)
-                {
-                    var dateFrom = DateTime.UtcNow.AddDays(-daysBack.Value);
-                    query = query.Where(i => i.IssueDate >= dateFrom);
-                }
-                else if (startDate.HasValue && endDate.HasValue)
-                {
-                    query = query.Where(i => i.IssueDate >= startDate.Value && i.IssueDate <= endDate.Value);
-                }
-
-                var invoices = await query
-                                    .AsNoTracking()
-                                    .Select(i => i.ToHeaderDto())
-                                    .ToListAsync();
+                var invoices = await _invoiceRepository.GetInvoicesByCriteriaAsync(criteria);
 
                 return OperationalResult<List<InvoiceHeaderDto>>.Ok(invoices);
             }
