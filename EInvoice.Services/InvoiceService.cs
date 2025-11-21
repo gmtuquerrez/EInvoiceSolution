@@ -31,6 +31,9 @@ namespace EInvoice.Services
         {
             try
             {
+                // TODO: Validate environment create configuration manager service
+
+
                 // Validate customer
                 var customer = await _customerRepository.GetByIdentificationAsync(model.CustomerIdentification);
                 if (customer == null)

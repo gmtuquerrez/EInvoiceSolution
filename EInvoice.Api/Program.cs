@@ -22,7 +22,6 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IUserProvider, HttpContextUserProvider>();
 
 // DbContext
-
 var connectionString = builder.Configuration
     .GetSection("Configurations:ConnectionStrings:EInvoiceDb")
     .Value;
