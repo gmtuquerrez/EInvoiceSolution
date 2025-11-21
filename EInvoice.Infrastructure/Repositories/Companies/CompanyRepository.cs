@@ -13,6 +13,11 @@ namespace EInvoice.Infrastructure.Repositories
             _context = context;
         }
 
+        public async Task<List<Company>> GetAllAsync()
+        {
+            return await _context.Companies!.ToListAsync();
+        }
+
         public async Task<Company?> GetByRucAsync(string ruc)
         {
             return await _context.Companies

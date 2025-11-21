@@ -22,12 +22,12 @@ builder.Services.AddDbContext<EInvoiceDbContext>(options =>
 // Custom providers
 builder.Services.AddScoped<IUserProvider, SystemUserProvider>();
 
-
 // Repositories
 builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IEmissionPointRepository, EmissionPointRepository>();
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+builder.Services.AddSingleton<ICompanyCacheService, CompanyCacheService>();
 
 
 // Services

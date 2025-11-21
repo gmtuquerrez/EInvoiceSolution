@@ -7,13 +7,20 @@ namespace EInvoiceSolution.SignerConsole.Workers
     public class SignerWorker : ISignerWorker
     {
         private readonly IInvoiceService _invoiceService;
+        private readonly ICompanyCacheService _companyCache;
 
-        public SignerWorker(IInvoiceService invoiceService)
+        public SignerWorker(IInvoiceService invoiceService,
+            ICompanyCacheService companyCache)
         {
             _invoiceService = invoiceService;
+            _companyCache = companyCache;
         }
         public async Task ExecuteAsync()
         {
+
+            // Preload company cache
+            await _companyCache.LoadAsync();
+
             int page = 1;
             const int pageSize = 100;
 
@@ -46,11 +53,29 @@ namespace EInvoiceSolution.SignerConsole.Workers
 
                 foreach (var invoice in records)
                 {
-                    Console.WriteLine(
-                        $"Invoice ID: {invoice.Id}, AccessKey: {invoice.AccessKey}, Status: {criteria.StatusName}");
+
+                    try
+                    {
+                        var company = _companyCache.GetById(invoice.CompanyId);
+
+                        if (company == null)
+                        {
+                            Console.WriteLine($"Warning: Company with ID {invoice.CompanyId} not found in cache.");
+                            continue;
+                        }
+
+                        Console.WriteLine(
+                            $"Invoice ID: {invoice.Id}, AccessKey: {invoice.AccessKey}, Status: {criteria.StatusName}");
+
+                    }
+                    catch (Exception)
+                    {
+
+                        throw;
+                    }
                 }
 
-                // Si vinieron menos del pagesize, es el último lote
+                // Verify if we need to continue to the next page
                 if (records.Count < pageSize)
                     break;
 
