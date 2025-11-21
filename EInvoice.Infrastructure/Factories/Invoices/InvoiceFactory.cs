@@ -1,4 +1,5 @@
 ﻿using EInvoice.Infrastructure.Domain.Entities;
+using EInvoice.Infrastructure.Mappers.Invoices;
 using EInvoiceSolution.Core.Invoices.Models;
 using EInvoiceSolution.Core.Invoices.Models.Dtos;
 using Newtonsoft.Json;
@@ -27,6 +28,9 @@ namespace EInvoice.Infrastructure.Factories.Invoices
                 EmissionPointId = emissionPointId,
 
                 JsonData = JsonConvert.SerializeObject(model),
+
+                // Create the XML representation of the invoice and validate with xsd
+                XmlGenerated = InvoiceXmlGenerator.GenerateXml(model),
                 StatusId = 1,
 
                 Items = new List<InvoiceItem>(),

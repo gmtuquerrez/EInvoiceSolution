@@ -7,6 +7,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Schemas\Sri\Invoice\Xsd\invoice.xsd" />
+    <None Remove="Schemas\Sri\Invoice\Xsd\xmldsig-core-schema.xsd" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Schemas\Sri\Invoice\Xsd\invoice.xsd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Schemas\Sri\Invoice\Xsd\xmldsig-core-schema.xsd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.11" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
   </ItemGroup>

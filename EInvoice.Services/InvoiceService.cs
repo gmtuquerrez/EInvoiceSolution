@@ -29,37 +29,45 @@ namespace EInvoice.Services
 
         public async Task<OperationalResult<InvoiceCreatedResponse>> CreateInvoiceAsync(InvoiceModel model, string createdBy)
         {
-            // Validar customer
-            var customer = await _customerRepository.GetByIdentificationAsync(model.CustomerIdentification);
-            if (customer == null)
-                return OperationalResult<InvoiceCreatedResponse>.Fail("Customer not found.");
-
-            // Validar company
-            var company = await _companyRepository.GetByRucAsync(model.Ruc);
-            if (company == null)
-                return OperationalResult<InvoiceCreatedResponse>.Fail("Company not found.");
-
-            // Validar punto de emisión
-            var emissionPoint = await _emissionPointRepository.GetByCodeAndCompanyAsync(model.Establishment, company.Id);
-            if (emissionPoint == null)
-                return OperationalResult<InvoiceCreatedResponse>.Fail("EmissionPoint not found.");
-
-            // Mapeo usando factory
-            var invoice = InvoiceFactory.CreateEntity(model, customer.Id, company.Id, emissionPoint.Id);
-            invoice.CreatedBy = createdBy;
-
-            // Guardar en base
-            var created = await _invoiceRepository.CreateAsync(invoice);
-
-            // Retornar resultado exitoso
-            var response = new InvoiceCreatedResponse
+            try
             {
-                InvoiceId = created.Id,
-                AccessKey = created.AccessKey,
-                Status = "CREATED"
-            };
+                // Validate customer
+                var customer = await _customerRepository.GetByIdentificationAsync(model.CustomerIdentification);
+                if (customer == null)
+                    return OperationalResult<InvoiceCreatedResponse>.Fail("Customer not found.");
 
-            return OperationalResult<InvoiceCreatedResponse>.Ok(response);
+                // Validate company
+                var company = await _companyRepository.GetByRucAsync(model.Ruc);
+                if (company == null)
+                    return OperationalResult<InvoiceCreatedResponse>.Fail("Company not found.");
+
+                // Validate emission point  
+                var emissionPoint = await _emissionPointRepository.GetByCodeAndCompanyAsync(model.Establishment, company.Id);
+                if (emissionPoint == null)
+                    return OperationalResult<InvoiceCreatedResponse>.Fail("EmissionPoint not found.");
+
+                // Map to entity
+                var invoice = InvoiceFactory.CreateEntity(model, customer.Id, company.Id, emissionPoint.Id);
+                invoice.CreatedBy = createdBy;
+
+                // Create invoice and save in database
+                var created = await _invoiceRepository.CreateAsync(invoice);
+
+                // Return response
+                var response = new InvoiceCreatedResponse
+                {
+                    InvoiceId = created.Id,
+                    AccessKey = created.AccessKey,
+                    Status = "CREATED"
+                };
+
+                return OperationalResult<InvoiceCreatedResponse>.Ok(response);
+            }
+            catch (Exception ex)
+            {
+
+                return OperationalResult<InvoiceCreatedResponse>.Fail(message: ex.Message);
+            }
         }
 
         public async Task<OperationalResult<PagedResult<InvoiceHeaderDto>>> GetInvoicesByCriteriaAsync(InvoiceCriteria criteria)

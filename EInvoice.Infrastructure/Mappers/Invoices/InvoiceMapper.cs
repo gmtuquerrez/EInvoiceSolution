@@ -43,7 +43,6 @@ namespace EInvoice.Infrastructure.Mappers.Invoices
                 {
                     FechaEmision = invoiceModel.IssueDate.ToString("dd/MM/yyyy"),
                     DirEstablecimiento = invoiceModel.EstablishmentAddress,
-                    ContribuyenteEspecial = invoiceModel.SpecialTaxPayer,
                     ObligadoContabilidad = invoiceModel.RequiredKeepAccounting == "SI"
                         ? ObligadoContabilidad.Si
                         : ObligadoContabilidad.No,
@@ -59,6 +58,12 @@ namespace EInvoice.Infrastructure.Mappers.Invoices
                 }
             };
 
+            // Optional fields
+            if (!string.IsNullOrEmpty(invoiceModel.SpecialTaxPayer))
+            {
+                factura.InfoFactura.ContribuyenteEspecial = invoiceModel.SpecialTaxPayer;
+            }
+
             foreach (var item in taxesDetails)
             {
                 factura.InfoFactura.TotalConImpuestos.Add(item);
@@ -72,7 +77,6 @@ namespace EInvoice.Infrastructure.Mappers.Invoices
                 var detalle = new FacturaDetallesDetalle
                 {
                     CodigoPrincipal = item.Code,
-                    CodigoAuxiliar = item.AuxCode,
                     Descripcion = item.Description,
                     Cantidad = item.Quantity,
                     PrecioUnitario = item.UnitPrice,
@@ -80,7 +84,13 @@ namespace EInvoice.Infrastructure.Mappers.Invoices
                     PrecioTotalSinImpuesto = item.TotalWithoutTaxes,
                 };
 
-                // Impuestos por detalle
+                // Optional fields
+                if (!string.IsNullOrEmpty(item.AuxCode))
+                {
+                    detalle.CodigoAuxiliar = item.AuxCode;
+                }
+
+                // Taxes details
                 foreach (var tax in item.Taxes ?? new List<TaxesModel>())
                 {
                     var impuesto = new Impuesto
@@ -98,7 +108,7 @@ namespace EInvoice.Infrastructure.Mappers.Invoices
                 factura.Detalles.Add(detalle);
             }
 
-            // Pagos (si existen)
+            // Paymens details
 
             if (invoiceModel.Payments != null && invoiceModel.Payments.Any())
             {
@@ -114,7 +124,7 @@ namespace EInvoice.Infrastructure.Mappers.Invoices
                 }
             }
 
-            // Campos Adicionales (si existen)
+            // Aditional fields
             if (invoiceModel.AdditionalFields != null && invoiceModel.AdditionalFields.Any())
             {
                 foreach (var field in invoiceModel.AdditionalFields)
