@@ -3,13 +3,13 @@ using EInvoice.Infrastructure.Db;
 using EInvoice.Infrastructure.Identity;
 using EInvoice.Infrastructure.Repositories;
 using EInvoice.Services;
+using EInvoice.Services.Configuration;
 using EInvoice.Services.Contracts;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// Controllers
 builder.Services.AddControllers()
     .AddNewtonsoftJson(options =>
         options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
@@ -21,20 +21,39 @@ builder.Services.AddSwaggerGen();
 // Custom providers
 builder.Services.AddScoped<IUserProvider, HttpContextUserProvider>();
 
-// DbContext
-var connectionString = builder.Configuration
-    .GetSection("Configurations:ConnectionStrings:EInvoiceDb")
-    .Value;
+// Load configurations
+var confSection = builder.Configuration.GetSection("Configurations");
 
+if (!confSection.Exists())
+{
+    throw new InvalidOperationException("Section 'Configurations' not found in configuration.");
+}
+
+var conf = confSection.Get<ConfigurationsManager>()!;
+
+// Detect environment
+var env =
+    Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ??
+    Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ??
+    "Development";
+
+Console.WriteLine($"Current Environment: {env}");
+
+conf.IsProduction = env.Equals("Production", StringComparison.OrdinalIgnoreCase);
+
+// DbContext (solo 1 vez)
 builder.Services.AddDbContext<EInvoiceDbContext>(options =>
-    options.UseNpgsql(connectionString).EnableSensitiveDataLogging()     // ← DELETE
-           .EnableDetailedErrors());
+{
+    options.UseNpgsql(conf.ConnectionString.EInvoiceDb);
 
+    if (!conf.IsProduction)
+    {
+        options.EnableSensitiveDataLogging();
+        options.EnableDetailedErrors();
+    }
+});
 
-builder.Services.AddDbContext<EInvoiceDbContext>(options =>
-    options.UseNpgsql(connectionString));
-
-// Agregar acceso a HttpContext
+// HttpContext
 builder.Services.AddHttpContextAccessor();
 
 // Repositories
@@ -50,11 +69,7 @@ builder.Logging.AddConsole();
 
 var app = builder.Build();
 
-// Print current environment
-var env = app.Services.GetRequiredService<IWebHostEnvironment>();
-Console.WriteLine($"Current Environment: {env.EnvironmentName}");
-
-// Configure the HTTP request pipeline.
+// Swagger solo en DEV
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -62,9 +77,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
