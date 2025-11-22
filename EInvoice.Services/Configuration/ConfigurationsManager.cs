@@ -1,14 +1,12 @@
-﻿namespace EInvoice.Services.Configuration
+﻿using Microsoft.Extensions.Configuration;
+
+namespace EInvoice.Services.Configuration
 {
     public class ConfigurationsManager
     {
-        public ConnectionStrings ConnectionString { get; set; } = new();
+        public string ConnectionString { get; set; } = string.Empty;
         public SriSettings Sri { get; set; } = new();
         public bool IsProduction { get; set; }
-    }
-    public class ConnectionStrings
-    {
-        public string EInvoiceDb { get; set; } = string.Empty;
     }
 
     public class SriSettings

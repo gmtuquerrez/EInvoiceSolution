@@ -41,10 +41,10 @@ Console.WriteLine($"Current Environment: {env}");
 
 conf.IsProduction = env.Equals("Production", StringComparison.OrdinalIgnoreCase);
 
-// DbContext (solo 1 vez)
+// DbContext
 builder.Services.AddDbContext<EInvoiceDbContext>(options =>
 {
-    options.UseNpgsql(conf.ConnectionString.EInvoiceDb);
+    options.UseNpgsql(conf.ConnectionString);
 
     if (!conf.IsProduction)
     {

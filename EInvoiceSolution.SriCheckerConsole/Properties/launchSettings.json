@@ -1,9 +1,10 @@
 {
   "profiles": {
-    "MyConsoleApp": {
+    "EInvoice.Signer.Console": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
